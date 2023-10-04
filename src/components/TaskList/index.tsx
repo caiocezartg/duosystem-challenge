@@ -17,6 +17,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddIcon } from "@chakra-ui/icons";
+import { v4 as uuidv4 } from "uuid";
 import { useState } from "react";
 
 import TaskItem from "../TaskItem";
@@ -29,6 +30,13 @@ const inputSchema = z.object({
 
 type IFormInput = z.infer<typeof inputSchema>;
 
+type ITask = {
+  id: string;
+  taskTitle: string;
+  createdAt: Date;
+  isCompleted: boolean;
+};
+
 function TaskList() {
   const {
     handleSubmit,
@@ -37,10 +45,35 @@ function TaskList() {
   } = useForm<IFormInput>({
     resolver: zodResolver(inputSchema),
   });
-  const [taskList, setTaskList] = useState([]);
+  const [taskList, setTaskList] = useState<ITask[]>([]);
 
   function addNewTask(data: IFormInput) {
-    console.log(data);
+    const newTask = {
+      id: uuidv4(),
+      taskTitle: data.taskTitle,
+      createdAt: new Date(),
+      isCompleted: false,
+    };
+
+    setTaskList([...taskList, newTask]);
+  }
+
+  function removeTask(idTaskRemoved: string) {
+    const newTaskListFiltered = taskList.filter((task) => {
+      return task.id !== idTaskRemoved;
+    });
+
+    setTaskList(newTaskListFiltered);
+  }
+
+  function completeTask(idTaskCompleted: string) {
+    const newTaskListFiltered = taskList.map((task) => {
+      return task.id === idTaskCompleted
+        ? { ...task, isCompleted: !task.isCompleted }
+        : task;
+    });
+
+    setTaskList(newTaskListFiltered);
   }
 
   return (
@@ -65,9 +98,18 @@ function TaskList() {
             </Text>
           ) : (
             <VStack spacing={3}>
-              <TaskItem title="Um texto aleatório pra botar aqui aaaaaaaaaaaaa" />
-              <TaskItem title="Um texto aleatório pra botar aqui" />
-              <TaskItem title="Um texto aleatório pra botar aqui" />
+              {taskList.map((task) => {
+                return (
+                  <TaskItem
+                    key={task.id}
+                    id={task.id}
+                    isCompleted={task.isCompleted}
+                    title={task.taskTitle}
+                    removeTask={removeTask}
+                    completeTask={completeTask}
+                  />
+                );
+              })}
             </VStack>
           )}
         </Box>
