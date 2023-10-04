@@ -15,9 +15,19 @@ import {
 import { AddIcon } from "@chakra-ui/icons";
 import TaskItem from "../TaskItem";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+
+type IFormInput = {
+  taskTitle: string;
+};
 
 function TaskList() {
+  const { handleSubmit, register } = useForm<IFormInput>();
   const [taskList, setTaskList] = useState([""]);
+
+  function addNewTask(data: IFormInput) {
+    console.log(data);
+  }
 
   return (
     <Container maxWidth="3xl">
@@ -51,31 +61,43 @@ function TaskList() {
 
           <Divider marginY={5} />
 
-          <FormControl as="form">
-            <FormLabel>Digite o texto da sua tarefa</FormLabel>
+          <form onSubmit={handleSubmit(addNewTask)}>
+            <FormControl>
+              <FormLabel>Digite o texto da sua tarefa</FormLabel>
 
-            <Flex>
-              <Input
-                width="80%"
-                borderRightRadius={0}
-                borderRight="none"
-                borderColor="pink.500"
-                focusBorderColor="pink.400"
-              />
+              <Flex>
+                {/* <Controller
+                  name="taskTitle"
+                  control={control}
+                  render={({ field }) => (
+                    
+                  )}
+                ></Controller> */}
 
-              <Button
-                borderLeftRadius={0}
-                leftIcon={<AddIcon />}
-                colorScheme="pink"
-              >
-                Adicionar tarefa
-              </Button>
-            </Flex>
+                <Input
+                  width="80%"
+                  borderRightRadius={0}
+                  borderRight="none"
+                  borderColor="pink.500"
+                  focusBorderColor="pink.400"
+                  {...register("taskTitle")}
+                />
 
-            <FormHelperText>
-              A sua tarefa precisa no mínimo de 3 caracteres.
-            </FormHelperText>
-          </FormControl>
+                <Button
+                  borderLeftRadius={0}
+                  leftIcon={<AddIcon />}
+                  colorScheme="pink"
+                  type="submit"
+                >
+                  Adicionar tarefa
+                </Button>
+              </Flex>
+
+              <FormHelperText>
+                A sua tarefa precisa no mínimo de 3 caracteres.
+              </FormHelperText>
+            </FormControl>
+          </form>
         </Box>
       </VStack>
     </Container>
