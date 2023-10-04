@@ -1,26 +1,20 @@
 import {
   Box,
-  Button,
   Container,
   Divider,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  FormHelperText,
-  FormLabel,
   Heading,
-  Input,
   Text,
   VStack,
 } from "@chakra-ui/react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AddIcon } from "@chakra-ui/icons";
 import { v4 as uuidv4 } from "uuid";
 import { useState } from "react";
 
 import TaskItem from "../TaskItem";
+import getDateNow from "../../utils/getDateNow";
+import FormAddTask from "../FormAddTask";
 
 const inputSchema = z.object({
   taskTitle: z
@@ -28,12 +22,12 @@ const inputSchema = z.object({
     .min(3, { message: "A sua tarefa não contém, no mínimo, 3 caracteres." }),
 });
 
-type IFormInput = z.infer<typeof inputSchema>;
+export type IFormInput = z.infer<typeof inputSchema>;
 
 type ITask = {
   id: string;
   taskTitle: string;
-  createdAt: Date;
+  createdAt: string;
   isCompleted: boolean;
 };
 
@@ -48,10 +42,12 @@ function TaskList() {
   const [taskList, setTaskList] = useState<ITask[]>([]);
 
   function addNewTask(data: IFormInput) {
+    const formattedDate = getDateNow();
+
     const newTask = {
       id: uuidv4(),
       taskTitle: data.taskTitle,
-      createdAt: new Date(),
+      createdAt: formattedDate,
       isCompleted: false,
     };
 
@@ -105,6 +101,7 @@ function TaskList() {
                     id={task.id}
                     isCompleted={task.isCompleted}
                     title={task.taskTitle}
+                    createdAt={task.createdAt}
                     removeTask={removeTask}
                     completeTask={completeTask}
                   />
@@ -115,43 +112,12 @@ function TaskList() {
         </Box>
 
         <Box width="100%" bg="gray.700" borderRadius="lg" padding={5}>
-          <Heading size="md">Adicionar tarefa</Heading>
-
-          <Divider marginY={5} />
-
-          <form onSubmit={handleSubmit(addNewTask)}>
-            <FormControl isInvalid={errors.taskTitle ? true : false}>
-              <FormLabel>Digite o texto da sua tarefa:</FormLabel>
-
-              <Flex>
-                <Input
-                  width="80%"
-                  borderRightRadius={0}
-                  borderRight="none"
-                  borderColor="pink.500"
-                  focusBorderColor="pink.400"
-                  {...register("taskTitle")}
-                />
-
-                <Button
-                  borderLeftRadius={0}
-                  leftIcon={<AddIcon />}
-                  colorScheme="pink"
-                  type="submit"
-                >
-                  Adicionar tarefa
-                </Button>
-              </Flex>
-
-              {errors.taskTitle ? (
-                <FormErrorMessage>{errors.taskTitle.message}</FormErrorMessage>
-              ) : (
-                <FormHelperText>
-                  A sua tarefa precisa ter, no mínimo, 3 caracteres.
-                </FormHelperText>
-              )}
-            </FormControl>
-          </form>
+          <FormAddTask
+            addNewTask={addNewTask}
+            handleSubmit={handleSubmit}
+            register={register}
+            errors={errors}
+          />
         </Box>
       </VStack>
     </Container>

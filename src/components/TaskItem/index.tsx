@@ -1,10 +1,11 @@
 import { CheckIcon, DeleteIcon } from "@chakra-ui/icons";
-import { Button, HStack, Text } from "@chakra-ui/react";
+import { Box, Button, HStack, Text } from "@chakra-ui/react";
 
 type ITaskItemProps = {
   id: string;
   title: string;
   isCompleted: boolean;
+  createdAt: string;
   removeTask: (idTaskRemoved: string) => void;
   completeTask: (idTaskCompleted: string) => void;
 };
@@ -12,6 +13,7 @@ type ITaskItemProps = {
 function TaskItem({
   id,
   title,
+  createdAt,
   isCompleted,
   removeTask,
   completeTask,
@@ -24,15 +26,25 @@ function TaskItem({
       borderRadius="lg"
       padding={3}
     >
-      <Text flex={1} textDecoration={isCompleted ? "line-through" : "none"}>
-        {title}
-      </Text>
+      <Box flex={1}>
+        <Text
+          textDecoration={isCompleted ? "line-through" : "none"}
+          color={isCompleted ? "gray.400" : "gray.50"}
+          fontSize="xl"
+        >
+          {title}
+        </Text>
+
+        <Text as="em" fontSize="xs" color="gray.500">
+          {createdAt}
+        </Text>
+      </Box>
 
       <Button
         leftIcon={<CheckIcon />}
         onClick={() => completeTask(id)}
         colorScheme="green"
-        disabled={isCompleted}
+        isDisabled={isCompleted}
       >
         Concluir tarefa
       </Button>
