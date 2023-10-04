@@ -5,6 +5,7 @@ import {
   Divider,
   Flex,
   FormControl,
+  FormErrorMessage,
   FormHelperText,
   FormLabel,
   Heading,
@@ -12,18 +13,31 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
-import TaskItem from "../TaskItem";
-import { useState } from "react";
+import { z } from "zod";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AddIcon } from "@chakra-ui/icons";
+import { useState } from "react";
 
-type IFormInput = {
-  taskTitle: string;
-};
+import TaskItem from "../TaskItem";
+
+const inputSchema = z.object({
+  taskTitle: z
+    .string()
+    .min(3, { message: "A sua tarefa não contém, no mínimo, 3 caracteres." }),
+});
+
+type IFormInput = z.infer<typeof inputSchema>;
 
 function TaskList() {
-  const { handleSubmit, register } = useForm<IFormInput>();
-  const [taskList, setTaskList] = useState([""]);
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<IFormInput>({
+    resolver: zodResolver(inputSchema),
+  });
+  const [taskList, setTaskList] = useState([]);
 
   function addNewTask(data: IFormInput) {
     console.log(data);
@@ -46,10 +60,12 @@ function TaskList() {
           <Divider marginY={5} />
 
           {taskList.length === 0 ? (
-            <Text>Nenhum item adicionado a lista de tarefas.</Text>
+            <Text textAlign="center" color="gray.500">
+              Nenhum item adicionado a lista de tarefas.
+            </Text>
           ) : (
             <VStack spacing={3}>
-              <TaskItem title="Um texto aleatório pra botar aqui" />
+              <TaskItem title="Um texto aleatório pra botar aqui aaaaaaaaaaaaa" />
               <TaskItem title="Um texto aleatório pra botar aqui" />
               <TaskItem title="Um texto aleatório pra botar aqui" />
             </VStack>
@@ -62,18 +78,10 @@ function TaskList() {
           <Divider marginY={5} />
 
           <form onSubmit={handleSubmit(addNewTask)}>
-            <FormControl>
-              <FormLabel>Digite o texto da sua tarefa</FormLabel>
+            <FormControl isInvalid={errors.taskTitle ? true : false}>
+              <FormLabel>Digite o texto da sua tarefa:</FormLabel>
 
               <Flex>
-                {/* <Controller
-                  name="taskTitle"
-                  control={control}
-                  render={({ field }) => (
-                    
-                  )}
-                ></Controller> */}
-
                 <Input
                   width="80%"
                   borderRightRadius={0}
@@ -93,9 +101,13 @@ function TaskList() {
                 </Button>
               </Flex>
 
-              <FormHelperText>
-                A sua tarefa precisa no mínimo de 3 caracteres.
-              </FormHelperText>
+              {errors.taskTitle ? (
+                <FormErrorMessage>{errors.taskTitle.message}</FormErrorMessage>
+              ) : (
+                <FormHelperText>
+                  A sua tarefa precisa ter, no mínimo, 3 caracteres.
+                </FormHelperText>
+              )}
             </FormControl>
           </form>
         </Box>
