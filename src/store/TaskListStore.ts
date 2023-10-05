@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { v4 as uuidv4 } from "uuid";
 import getDateNow from "../utils/getDateNow";
-import { IFormInput } from "../components/FormAddTask";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { IFormInput } from "../schema/InputTaskSchema";
 
 type ITask = {
   id: string;
@@ -17,6 +17,7 @@ type ITaskListStore = {
   addNewTask: (data: IFormInput) => void;
   removeTask: (id: string) => void;
   completeTask: (id: string) => void;
+  editTask: (id: string, newTitle: string) => void;
   filterTaskListByType: (type: string) => void;
 };
 
@@ -49,6 +50,13 @@ const useTaskListStore = create<ITaskListStore>()(
           ),
         }));
       },
+      editTask: (id, newTitle) => {
+        set(() => ({
+          taskList: get().taskList.map((task) =>
+            task.id === id ? { ...task, taskTitle: newTitle } : task
+          ),
+        }));
+      },
       filterTaskListByType: (type) => {
         if (type === "completed") {
           const taskListOnlyCompleted = get().taskList.filter(
@@ -67,14 +75,14 @@ const useTaskListStore = create<ITaskListStore>()(
         }
 
         if (type === "all") {
-          set(() => ({ filteredTaskList: []}))
+          set(() => ({ filteredTaskList: [] }));
         }
       },
     }),
     {
       name: "task-list",
       storage: createJSONStorage(() => localStorage),
-      partialize: (state => ({ taskList: state.taskList }))
+      partialize: (state) => ({ taskList: state.taskList }),
     }
   )
 );

@@ -1,4 +1,4 @@
-import { AddIcon } from "@chakra-ui/icons";
+import { EditIcon } from "@chakra-ui/icons";
 import {
   Modal,
   ModalOverlay,
@@ -8,12 +8,10 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-  Text,
   UseModalProps,
   Flex,
   FormControl,
   FormErrorMessage,
-  FormHelperText,
   FormLabel,
   IconButton,
   Input,
@@ -22,6 +20,7 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IFormInput, inputSchema } from "../../schema/InputTaskSchema";
+import useTaskListStore from "../../store/TaskListStore";
 
 type IModalEditTask = {
   idTask: string;
@@ -37,17 +36,20 @@ function ModalEditTask({ isOpen, onClose, idTask }: IModalEditTask) {
   });
 
   const [isMobile] = useMediaQuery("(max-width: 30em)");
+  const editTask = useTaskListStore((state) => state.editTask);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal size="xl" isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent background="gray.700">
         <ModalHeader>Editar tarefa</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <form>
+          <form
+            onSubmit={handleSubmit((data) => editTask(idTask, data.taskTitle))}
+          >
             <FormControl isInvalid={errors.taskTitle ? true : false}>
-              <FormLabel>Digite o texto da sua tarefa:</FormLabel>
+              <FormLabel>Digite o novo texto da sua tarefa:</FormLabel>
 
               <Flex>
                 <Input
@@ -63,31 +65,26 @@ function ModalEditTask({ isOpen, onClose, idTask }: IModalEditTask) {
                   <>
                     <Button
                       borderLeftRadius={0}
-                      leftIcon={<AddIcon />}
+                      leftIcon={<EditIcon />}
                       colorScheme="pink"
                       type="submit"
                     >
-                      Adicionar tarefa
+                      Alterar tarefa
                     </Button>
                   </>
                 ) : (
                   <IconButton
                     borderLeftRadius={0}
-                    icon={<AddIcon />}
+                    icon={<EditIcon />}
                     colorScheme="pink"
                     type="submit"
-                    aria-label="Adicionar tarefa"
+                    aria-label="Alterar tarefa"
                   />
                 )}
               </Flex>
 
-              {errors.taskTitle ? (
+              {errors.taskTitle && (
                 <FormErrorMessage>{errors.taskTitle.message}</FormErrorMessage>
-              ) : (
-                <FormHelperText>
-                  A sua tarefa precisa ter, no mínimo, 3 caracteres e, no
-                  máximo, 50 caracteres.
-                </FormHelperText>
               )}
             </FormControl>
           </form>

@@ -96,6 +96,13 @@ function TaskItem({ id, title, createdAt, isCompleted }: ITaskItemProps) {
               colorScheme="red"
               aria-label="Remover tarefa"
             />
+
+            <IconButton
+              icon={<EditIcon />}
+              onClick={onOpen}
+              colorScheme="orange"
+              aria-label="Alterar tarefa"
+            />
           </HStack>
         )}
       </HStack>
