@@ -2,9 +2,7 @@ import {
   Box,
   Container,
   Divider,
-  Flex,
   Heading,
-  Select,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -13,15 +11,13 @@ import useTaskListStore from "../../store/TaskListStore";
 
 import TaskItem from "../TaskItem";
 import FormAddTask from "../FormAddTask";
+import FiltersTaskList from "../FiltersTaskList";
 
 function TaskList() {
-  const [taskList, filterTaskListByType, filteredTaskList] = useTaskListStore(
-    (state) => [
-      state.taskList,
-      state.filterTaskListByType,
-      state.filteredTaskList,
-    ]
-  );
+  const [taskList, filteredTaskList] = useTaskListStore((state) => [
+    state.taskList,
+    state.filteredTaskList,
+  ]);
 
   return (
     <Container maxWidth="3xl">
@@ -45,24 +41,7 @@ function TaskList() {
             </Text>
           ) : (
             <VStack>
-              <Flex
-                width="100%"
-                alignItems="center"
-                justifyContent="flex-end"
-                gap={2}
-              >
-                <Text>Filtrar tarefas por:</Text>
-
-                <Select
-                  width="30%"
-                  onChange={({ target }) => filterTaskListByType(target.value)}
-                >
-                  <option disabled>Selecione um filtro</option>
-                  <option value="all">Por todas</option>
-                  <option value="completed">Por completas</option>
-                  <option value="uncompleted">Por incompletas</option>
-                </Select>
-              </Flex>
+              <FiltersTaskList />
 
               <VStack
                 spacing={3}

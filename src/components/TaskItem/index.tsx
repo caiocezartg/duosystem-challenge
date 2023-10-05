@@ -54,7 +54,7 @@ function TaskItem({ id, title, createdAt, isCompleted }: ITaskItemProps) {
             colorScheme="green"
             isDisabled={isCompleted}
           >
-            <Text>Concluir tarefa</Text>
+            Concluir tarefa
           </Button>
 
           <Button
@@ -62,7 +62,7 @@ function TaskItem({ id, title, createdAt, isCompleted }: ITaskItemProps) {
             onClick={() => removeTask(id)}
             colorScheme="red"
           >
-            <Text>Remover tarefa</Text>
+            Remover tarefa
           </Button>
         </>
       ) : (
