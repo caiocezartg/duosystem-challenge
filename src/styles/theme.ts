@@ -8,8 +8,8 @@ export const theme = extendTheme({
         color: "gray.50",
       },
       option: {
-        color: 'gray.700'
-      }
+        color: "gray.700",
+      },
     },
   },
 });

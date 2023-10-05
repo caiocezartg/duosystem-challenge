@@ -1,5 +1,12 @@
 import { CheckIcon, DeleteIcon } from "@chakra-ui/icons";
-import { Box, Button, HStack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  HStack,
+  IconButton,
+  Text,
+  useMediaQuery,
+} from "@chakra-ui/react";
 import useTaskListStore from "../../store/TaskListStore";
 
 type ITaskItemProps = {
@@ -14,6 +21,8 @@ function TaskItem({ id, title, createdAt, isCompleted }: ITaskItemProps) {
     state.completeTask,
     state.removeTask,
   ]);
+
+  const [isMobile] = useMediaQuery("(max-width: 30em)");
 
   return (
     <HStack
@@ -37,22 +46,43 @@ function TaskItem({ id, title, createdAt, isCompleted }: ITaskItemProps) {
         </Text>
       </Box>
 
-      <Button
-        leftIcon={<CheckIcon />}
-        onClick={() => completeTask(id)}
-        colorScheme="green"
-        isDisabled={isCompleted}
-      >
-        Concluir tarefa
-      </Button>
+      {!isMobile ? (
+        <>
+          <Button
+            leftIcon={<CheckIcon />}
+            onClick={() => completeTask(id)}
+            colorScheme="green"
+            isDisabled={isCompleted}
+          >
+            <Text>Concluir tarefa</Text>
+          </Button>
 
-      <Button
-        leftIcon={<DeleteIcon />}
-        onClick={() => removeTask(id)}
-        colorScheme="red"
-      >
-        Remover tarefa
-      </Button>
+          <Button
+            leftIcon={<DeleteIcon />}
+            onClick={() => removeTask(id)}
+            colorScheme="red"
+          >
+            <Text>Remover tarefa</Text>
+          </Button>
+        </>
+      ) : (
+        <>
+          <IconButton
+            icon={<CheckIcon />}
+            onClick={() => completeTask(id)}
+            colorScheme="green"
+            isDisabled={isCompleted}
+            aria-label="Concluir tarefa"
+          />
+
+          <IconButton
+            icon={<DeleteIcon />}
+            onClick={() => removeTask(id)}
+            colorScheme="red"
+            aria-label="Remover tarefa"
+          />
+        </>
+      )}
     </HStack>
   );
 }
