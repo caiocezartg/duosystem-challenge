@@ -1,4 +1,4 @@
-import { CheckIcon, DeleteIcon } from "@chakra-ui/icons";
+import { CheckIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -6,8 +6,10 @@ import {
   IconButton,
   Text,
   useMediaQuery,
+  useDisclosure,
 } from "@chakra-ui/react";
 import useTaskListStore from "../../store/TaskListStore";
+import ModalEditTask from "../ModalEditTask";
 
 type ITaskItemProps = {
   id: string;
@@ -23,67 +25,81 @@ function TaskItem({ id, title, createdAt, isCompleted }: ITaskItemProps) {
   ]);
 
   const [isMobile] = useMediaQuery("(max-width: 30em)");
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <HStack
-      spacing={2}
-      bg="gray.800"
-      width="100%"
-      borderRadius="lg"
-      padding={3}
-    >
-      <Box flex={1}>
-        <Text
-          textDecoration={isCompleted ? "line-through" : "none"}
-          color={isCompleted ? "gray.400" : "gray.50"}
-          fontSize="xl"
-        >
-          {title}
-        </Text>
+    <>
+      <ModalEditTask isOpen={isOpen} onClose={onClose} idTask={id} />
 
-        <Text as="em" fontSize="xs" color="gray.500">
-          {createdAt}
-        </Text>
-      </Box>
-
-      {!isMobile ? (
-        <>
-          <Button
-            leftIcon={<CheckIcon />}
-            onClick={() => completeTask(id)}
-            colorScheme="green"
-            isDisabled={isCompleted}
+      <HStack
+        spacing={2}
+        bg="gray.800"
+        width="100%"
+        borderRadius="lg"
+        padding={3}
+        justifyContent="space-between"
+      >
+        <Box width="50%">
+          <Text
+            textDecoration={isCompleted ? "line-through" : "none"}
+            color={isCompleted ? "gray.400" : "gray.50"}
+            fontSize={["md", "xl"]}
           >
-            Concluir tarefa
-          </Button>
+            {title}
+          </Text>
 
-          <Button
-            leftIcon={<DeleteIcon />}
-            onClick={() => removeTask(id)}
-            colorScheme="red"
-          >
-            Remover tarefa
-          </Button>
-        </>
-      ) : (
-        <>
-          <IconButton
-            icon={<CheckIcon />}
-            onClick={() => completeTask(id)}
-            colorScheme="green"
-            isDisabled={isCompleted}
-            aria-label="Concluir tarefa"
-          />
+          <Text as="em" fontSize="xs" color="gray.500">
+            {createdAt}
+          </Text>
+        </Box>
 
-          <IconButton
-            icon={<DeleteIcon />}
-            onClick={() => removeTask(id)}
-            colorScheme="red"
-            aria-label="Remover tarefa"
-          />
-        </>
-      )}
-    </HStack>
+        {!isMobile ? (
+          <HStack>
+            <Button
+              leftIcon={<CheckIcon />}
+              onClick={() => completeTask(id)}
+              colorScheme="green"
+              isDisabled={isCompleted}
+            >
+              Concluir
+            </Button>
+
+            <Button
+              leftIcon={<DeleteIcon />}
+              onClick={() => removeTask(id)}
+              colorScheme="red"
+            >
+              Remover
+            </Button>
+
+            <Button
+              leftIcon={<EditIcon />}
+              onClick={onOpen}
+              colorScheme="orange"
+            >
+              Editar
+            </Button>
+          </HStack>
+        ) : (
+          <HStack>
+            <IconButton
+              icon={<CheckIcon />}
+              onClick={() => completeTask(id)}
+              colorScheme="green"
+              isDisabled={isCompleted}
+              aria-label="Concluir tarefa"
+            />
+
+            <IconButton
+              icon={<DeleteIcon />}
+              onClick={() => removeTask(id)}
+              colorScheme="red"
+              aria-label="Remover tarefa"
+            />
+          </HStack>
+        )}
+      </HStack>
+    </>
   );
 }
 

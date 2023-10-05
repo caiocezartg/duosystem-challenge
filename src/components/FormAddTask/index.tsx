@@ -14,16 +14,8 @@ import {
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import useTaskListStore from "../../store/TaskListStore";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-const inputSchema = z.object({
-  taskTitle: z
-    .string()
-    .min(3, { message: "A sua tarefa não contém, no mínimo, 3 caracteres." }),
-});
-
-export type IFormInput = z.infer<typeof inputSchema>;
+import { IFormInput, inputSchema } from "../../schema/InputTaskSchema";
 
 function FormAddTask() {
   const {
@@ -83,7 +75,8 @@ function FormAddTask() {
             <FormErrorMessage>{errors.taskTitle.message}</FormErrorMessage>
           ) : (
             <FormHelperText>
-              A sua tarefa precisa ter, no mínimo, 3 caracteres.
+              A sua tarefa precisa ter, no mínimo, 3 caracteres e, no máximo, 50
+              caracteres.
             </FormHelperText>
           )}
         </FormControl>

@@ -20,7 +20,7 @@ function TaskList() {
   ]);
 
   return (
-    <Container maxWidth="3xl">
+    <Container maxWidth="4xl">
       <VStack
         alignItems="center"
         justifyContent="center"
