@@ -1,23 +1,20 @@
 import { CheckIcon, DeleteIcon } from "@chakra-ui/icons";
 import { Box, Button, HStack, Text } from "@chakra-ui/react";
+import useTaskListStore from "../../store/TaskListStore";
 
 type ITaskItemProps = {
   id: string;
   title: string;
   isCompleted: boolean;
   createdAt: string;
-  removeTask: (idTaskRemoved: string) => void;
-  completeTask: (idTaskCompleted: string) => void;
 };
 
-function TaskItem({
-  id,
-  title,
-  createdAt,
-  isCompleted,
-  removeTask,
-  completeTask,
-}: ITaskItemProps) {
+function TaskItem({ id, title, createdAt, isCompleted }: ITaskItemProps) {
+  const [completeTask, removeTask] = useTaskListStore((state) => [
+    state.completeTask,
+    state.removeTask,
+  ]);
+
   return (
     <HStack
       spacing={2}

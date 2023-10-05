@@ -10,26 +10,29 @@ import {
   Heading,
   Input,
 } from "@chakra-ui/react";
-import {
-  FieldErrors,
-  UseFormHandleSubmit,
-  UseFormRegister,
-} from "react-hook-form";
-import { IFormInput } from "../TaskList";
+import { useForm } from "react-hook-form";
+import useTaskListStore from "../../store/TaskListStore";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-type IFormAddTaskProps = {
-  handleSubmit: UseFormHandleSubmit<IFormInput, undefined>;
-  register: UseFormRegister<IFormInput>;
-  errors: FieldErrors<IFormInput>;
-  addNewTask: (data: IFormInput) => void;
-};
+const inputSchema = z.object({
+  taskTitle: z
+    .string()
+    .min(3, { message: "A sua tarefa não contém, no mínimo, 3 caracteres." }),
+});
 
-function FormAddTask({
-  handleSubmit,
-  addNewTask,
-  register,
-  errors,
-}: IFormAddTaskProps) {
+export type IFormInput = z.infer<typeof inputSchema>;
+
+function FormAddTask() {
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<IFormInput>({
+    resolver: zodResolver(inputSchema),
+  });
+  const addNewTask = useTaskListStore((state) => state.addNewTask);
+
   return (
     <>
       <Heading size="md">Adicionar tarefa</Heading>
