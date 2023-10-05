@@ -54,10 +54,10 @@ function TaskList() {
                 <Text>Filtrar tarefas por:</Text>
 
                 <Select
-                  placeholder="Selecione um filtro"
                   width="30%"
                   onChange={({ target }) => filterTaskListByType(target.value)}
                 >
+                  <option disabled>Selecione um filtro</option>
                   <option value="all">Por todas</option>
                   <option value="completed">Por completas</option>
                   <option value="uncompleted">Por incompletas</option>
