@@ -15,7 +15,13 @@ import TaskItem from "../TaskItem";
 import FormAddTask from "../FormAddTask";
 
 function TaskList() {
-  const taskList = useTaskListStore((state) => state.taskList);
+  const [taskList, filterTaskListByType, filteredTaskList] = useTaskListStore(
+    (state) => [
+      state.taskList,
+      state.filterTaskListByType,
+      state.filteredTaskList,
+    ]
+  );
 
   return (
     <Container maxWidth="3xl">
@@ -45,11 +51,16 @@ function TaskList() {
                 justifyContent="flex-end"
                 gap={2}
               >
-                <Text>Filtrar por:</Text>
+                <Text>Filtrar tarefas por:</Text>
 
-                <Select placeholder="Selecione um filtro" width="30%">
-                  <option value="status">Por status</option>
-                  <option value="data">Por data</option>
+                <Select
+                  placeholder="Selecione um filtro"
+                  width="30%"
+                  onChange={({ target }) => filterTaskListByType(target.value)}
+                >
+                  <option value="all">Por todas</option>
+                  <option value="completed">Por completas</option>
+                  <option value="uncompleted">Por incompletas</option>
                 </Select>
               </Flex>
 
@@ -60,17 +71,25 @@ function TaskList() {
                 overflowY="auto"
                 sx={{ "::-webkit-scrollbar": { display: "none" } }}
               >
-                {taskList.map((task) => {
-                  return (
-                    <TaskItem
-                      key={task.id}
-                      id={task.id}
-                      isCompleted={task.isCompleted}
-                      title={task.taskTitle}
-                      createdAt={task.createdAt}
-                    />
-                  );
-                })}
+                {filteredTaskList.length === 0
+                  ? taskList.map((task) => (
+                      <TaskItem
+                        key={task.id}
+                        id={task.id}
+                        createdAt={task.createdAt}
+                        title={task.taskTitle}
+                        isCompleted={task.isCompleted}
+                      />
+                    ))
+                  : filteredTaskList.map((task) => (
+                      <TaskItem
+                        key={task.id}
+                        id={task.id}
+                        createdAt={task.createdAt}
+                        title={task.taskTitle}
+                        isCompleted={task.isCompleted}
+                      />
+                    ))}
               </VStack>
             </VStack>
           )}
