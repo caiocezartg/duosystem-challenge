@@ -21,6 +21,7 @@ function FormAddTask() {
   const {
     handleSubmit,
     register,
+    reset,
     formState: { errors },
   } = useForm<IFormInput>({
     resolver: zodResolver(inputSchema),
@@ -35,7 +36,7 @@ function FormAddTask() {
 
       <Divider marginY={5} />
 
-      <form onSubmit={handleSubmit(addNewTask)}>
+      <form onSubmit={handleSubmit((data) => addNewTask(data, reset))}>
         <FormControl isInvalid={errors.taskTitle ? true : false}>
           <FormLabel>Digite o texto da sua tarefa:</FormLabel>
 

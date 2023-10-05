@@ -76,6 +76,7 @@ function TaskItem({ id, title, createdAt, isCompleted }: ITaskItemProps) {
               leftIcon={<EditIcon />}
               onClick={onOpen}
               colorScheme="orange"
+              isDisabled={isCompleted}
             >
               Editar
             </Button>
@@ -101,6 +102,7 @@ function TaskItem({ id, title, createdAt, isCompleted }: ITaskItemProps) {
               icon={<EditIcon />}
               onClick={onOpen}
               colorScheme="orange"
+              isDisabled={isCompleted}
               aria-label="Alterar tarefa"
             />
           </HStack>

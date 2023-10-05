@@ -11,7 +11,7 @@ function FiltersTaskList() {
       <Text>Filtrar tarefas por:</Text>
 
       <Select
-        width="30%"
+        width={["50%", "30%"]}
         onChange={({ target }) => filterTaskListByType(target.value)}
       >
         <option disabled>Selecione um filtro</option>

@@ -30,6 +30,7 @@ function ModalEditTask({ isOpen, onClose, idTask }: IModalEditTask) {
   const {
     handleSubmit,
     register,
+    reset,
     formState: { errors },
   } = useForm<IFormInput>({
     resolver: zodResolver(inputSchema),
@@ -46,7 +47,9 @@ function ModalEditTask({ isOpen, onClose, idTask }: IModalEditTask) {
         <ModalCloseButton />
         <ModalBody>
           <form
-            onSubmit={handleSubmit((data) => editTask(idTask, data.taskTitle))}
+            onSubmit={handleSubmit((data) =>
+              editTask(idTask, data.taskTitle, reset)
+            )}
           >
             <FormControl isInvalid={errors.taskTitle ? true : false}>
               <FormLabel>Digite o novo texto da sua tarefa:</FormLabel>

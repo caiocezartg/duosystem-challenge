@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import getDateNow from "../utils/getDateNow";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { IFormInput } from "../schema/InputTaskSchema";
+import { UseFormReset } from "react-hook-form";
 
 type ITask = {
   id: string;
@@ -14,10 +15,10 @@ type ITask = {
 type ITaskListStore = {
   taskList: ITask[];
   filteredTaskList: ITask[] | [];
-  addNewTask: (data: IFormInput) => void;
+  addNewTask: (data: IFormInput, reset: UseFormReset<IFormInput>) => void;
   removeTask: (id: string) => void;
   completeTask: (id: string) => void;
-  editTask: (id: string, newTitle: string) => void;
+  editTask: (id: string, newTitle: string, reset: UseFormReset<IFormInput>) => void;
   filterTaskListByType: (type: string) => void;
 };
 
@@ -26,7 +27,7 @@ const useTaskListStore = create<ITaskListStore>()(
     (set, get) => ({
       taskList: [],
       filteredTaskList: [],
-      addNewTask: (data: IFormInput) => {
+      addNewTask: (data, reset) => {
         const formattedDate = getDateNow();
 
         const newTask = {
@@ -37,6 +38,7 @@ const useTaskListStore = create<ITaskListStore>()(
         };
 
         set(() => ({ taskList: [...get().taskList, newTask] }));
+        reset();
       },
       removeTask: (id) => {
         set(() => ({
@@ -50,12 +52,13 @@ const useTaskListStore = create<ITaskListStore>()(
           ),
         }));
       },
-      editTask: (id, newTitle) => {
+      editTask: (id, newTitle, reset) => {
         set(() => ({
           taskList: get().taskList.map((task) =>
             task.id === id ? { ...task, taskTitle: newTitle } : task
           ),
         }));
+        reset()
       },
       filterTaskListByType: (type) => {
         if (type === "completed") {
